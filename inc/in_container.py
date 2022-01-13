@@ -21,14 +21,14 @@ class in_container(Builder):
 
     # Required Builder method. See that class for details.
     def DidBuildSucceed(self):
-        return True #TODO: how would we even know?
-    
+        return True  # TODO: how would we even know?
+
     # Required Builder method. See that class for details.
     def Build(self):
-        #Now, we should put us in self.buildPath.
+        # Now, we should put us in self.buildPath.
         pass
-    
-    #Override of Builder method. See that class for details.
+
+    # Override of Builder method. See that class for details.
     def BuildNext(self):
         if (not hasattr(self, "ebbs_next")):
             logging.warn("No \"ebbs_next\" to run in container. Build process complete!")
@@ -56,24 +56,29 @@ class in_container(Builder):
             runEBBSFileName = "run-ebbs.sh"
             runEBBS = self.CreateFile(runEBBSFileName)
             runEBBS.write(f"#!/bin/bash\n")
-            #TODO: Support windows & bash-less linux.
+            # TODO: Support windows & bash-less linux.
             runEBBS.write(f"pip install ebbs\n")
             nxtBuildFolder = ""
             if ("build_in" in nxt):
                 nxtBuildFolder = nxt['build_in']
-            runEBBS.write(f"ebbs -v -l {nxt['build']} {nxtBuildFolder}\n")
+            runEBBS.write(f"ebbs -v -b {nxt['build']} -i {nxtBuildFolder} . --event 'containerized'\n")
+            # runEBBS.write(f"pwd; echo ''; ls; echo ''; ls {nxtPath}")
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
             self.RunCommand(f"docker run                                       \
                 --rm                                                           \
                 -it                                                            \
-                --privileged                                                   \
-                --user root                                                    \
                 --mount type=bind,src={self.buildPath},dst=/mnt/env            \
                 --mount type=bind,src={nxtPath},dst=/mnt/run                   \
+                --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock\
                 -w /mnt/run                                                    \
                 --cpus {self.cpus}                                             \
                 --entrypoint /mnt/run/run-ebbs.sh                              \
                 --env-file {self.buildPath}/host.env                           \
                 {self.image}                                                   \
             ")
+            # Removed:
+            #     --privileged                                                 \
+            #     --user root                                                  \
+
+
