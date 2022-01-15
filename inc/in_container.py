@@ -68,7 +68,7 @@ class in_container(Builder):
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
             this.RunCommand(f'''docker run \
--rm \
+--rm \
 --mount type=bind,src={this.buildPath},dst=/mnt/env \
 --mount type=bind,src={nxtPath},dst=/mnt/run \
 --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
