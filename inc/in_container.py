@@ -63,7 +63,10 @@ class in_container(Builder):
             nxtBuildFolder = ""
             if ("build_in" in nxt):
                 nxtBuildFolder = nxt['build_in']
-            runEBBS.write(f"ebbs -v -b {nxt['build']} -i {nxtBuildFolder} . --event 'containerized'\n")
+            events = this.events
+            events.add("containerized")
+            eventStr = " --event ".join(events)
+            runEBBS.write(f"ebbs -v -b {nxt['build']} -i {nxtBuildFolder} . {eventStr}\n")
             # runEBBS.write(f"pwd; echo ''; ls; echo ''; ls {nxtPath}")
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
