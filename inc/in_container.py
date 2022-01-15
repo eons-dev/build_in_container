@@ -57,7 +57,9 @@ class in_container(Builder):
             runEBBS = this.CreateFile(runEBBSFileName)
             runEBBS.write(f"#!/bin/bash\n")
             # TODO: Support windows & bash-less linux.
+            runEBBS.write(f"pip install eons\n")
             runEBBS.write(f"pip install ebbs\n")
+            runEBBS.write(f"pip install eot\n")
             nxtBuildFolder = ""
             if ("build_in" in nxt):
                 nxtBuildFolder = nxt['build_in']
@@ -65,20 +67,14 @@ class in_container(Builder):
             # runEBBS.write(f"pwd; echo ''; ls; echo ''; ls {nxtPath}")
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
-            this.RunCommand(f"docker run                                       \
-                --rm                                                           \
-                -it                                                            \
-                --mount type=bind,src={this.buildPath},dst=/mnt/env            \
-                --mount type=bind,src={nxtPath},dst=/mnt/run                   \
-                --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock\
-                -w /mnt/run                                                    \
-                --cpus {this.cpus}                                             \
-                --entrypoint /mnt/run/run-ebbs.sh                              \
-                --env-file {this.buildPath}/host.env                           \
-                {this.image}                                                   \
-            ")
-            # Removed:
-            #     --privileged                                                 \
-            #     --user root                                                  \
-
-
+            this.RunCommand(f'''docker run \
+-rm \
+--mount type=bind,src={this.buildPath},dst=/mnt/env \
+--mount type=bind,src={nxtPath},dst=/mnt/run \
+--mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+-w /mnt/run \
+--cpus {this.cpus} \
+--entrypoint /mnt/run/run-ebbs.sh \
+--env-file {this.buildPath}/host.env \
+{this.image}
+''')
