@@ -30,8 +30,8 @@ class in_container(Builder):
 
     # Override of Builder method. See that class for details.
     def BuildNext(this):
-        if (not hasattr(this, "ebbs_next")):
-            logging.warn("No \"ebbs_next\" to run in container. Build process complete!")
+        if (not hasattr(this, "next")):
+            logging.warn("No \"next\" to run in container. Build process complete!")
             return
 
         logging.info("Setting up environment for containerized building.")
@@ -49,7 +49,7 @@ class in_container(Builder):
             logging.debug(f"Copying {dir} to {regDest}")
             copy_tree(dir, regDest)
 
-        for nxt in this.ebbs_next:
+        for nxt in this.next:
             nxtPath = this.PrepareNext(nxt)
             os.chdir(nxtPath)
             logging.debug(f"Preparing to run ({nxt['build']}) in {nxtPath} within docker image {this.image}")
