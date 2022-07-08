@@ -13,6 +13,7 @@ class in_container(Builder):
         this.clearBuildPath = False
 
         this.requiredKWArgs.append("image")
+        this.requiredKWArgs.append("next")
 
         this.optionalKWArgs["cpus"] = 1
         this.optionalKWArgs["copy_env"] = []
