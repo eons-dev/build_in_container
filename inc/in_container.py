@@ -61,15 +61,22 @@ class in_container(Builder):
             runEBBS.write(f"pip install eons\n")
             runEBBS.write(f"pip install ebbs\n")
             runEBBS.write(f"pip install eot\n")
+            
             nxtBuildFolder = ""
             if ("build_in" in nxt):
                 nxtBuildFolder = nxt['build_in']
+            
             events = this.events
             events.add("containerized")
             eventStr = ""
             for e in events:
                 eventStr += f" --event {e}"
-            runEBBS.write(f"ebbs -v . -b {nxt['build']} --name {this.projectName} --type {this.projectType} {eventStr} \n")
+
+            extraArgs = ""
+            for arg, val in this.executor.extraArgs.items():
+                extraArgs += f" --{arg} {val}"
+
+            runEBBS.write(f"ebbs -v . -b {nxt['build']} --name {this.projectName} --type {this.projectType} {eventStr} {extraArgs}\n")
             # runEBBS.write(f"pwd; echo ''; ls; echo ''; ls {nxtPath}")
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
