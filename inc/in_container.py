@@ -38,7 +38,7 @@ class in_container(Builder):
         logging.info("Setting up environment for containerized building.")
         envFile = this.CreateFile("host.env")
         for var in this.copy_env:
-            envFile.write(f"{var}=\"{os.getenv(var)}\"\n")
+            envFile.write(f"{var}={os.getenv(var)}\n")
         envFile.close()
         regDest = os.path.join(this.buildPath, os.path.basename(this.executor.defaultRepoDirectory))
         logging.debug(f"Copying {this.executor.defaultRepoDirectory} to {regDest}")
