@@ -30,7 +30,7 @@ class in_container(Builder):
         pass
 
     # Override of Builder method. See that class for details.
-    def BuildNext(this):
+    def CallNext(this):
         if (not hasattr(this, "next")):
             logging.warn("No \"next\" to run in container. Build process complete!")
             return
@@ -41,8 +41,8 @@ class in_container(Builder):
             envFile.write(f"{var}={os.getenv(var)}\n")
         envFile.close()
         regDest = os.path.join(this.buildPath, os.path.basename(this.executor.defaultRepoDirectory))
-        logging.debug(f"Copying {this.executor.defaultRepoDirectory} to {regDest}")
-        copy_tree(this.executor.defaultRepoDirectory, regDest)
+        logging.debug(f"Copying {this.executor.repo.store} to {regDest}")
+        copy_tree(this.executor.repo.store, regDest)
         for dir in this.executor.registerDirectories:
             if (not os.path.isdir(dir)):
                 continue
