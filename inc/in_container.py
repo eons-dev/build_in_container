@@ -76,7 +76,7 @@ class in_container(Builder):
             for arg, val in this.executor.extraArgs.items():
                 extraArgs += f" --{arg} {val}"
 
-            runEBBS.write(f"ebbs -v . -b {nxt['build']} --name {this.projectName} --type {this.projectType} {eventStr} {extraArgs}\n")
+            runEBBS.write(f"ebbs -vvv . -b {nxt['build']} --name {this.projectName} --type {this.projectType} {eventStr} {extraArgs}\n")
             # runEBBS.write(f"pwd; echo ''; ls; echo ''; ls {nxtPath}")
             runEBBS.close()
             os.chmod(runEBBSFileName, os.stat(runEBBSFileName).st_mode | stat.S_IEXEC)
